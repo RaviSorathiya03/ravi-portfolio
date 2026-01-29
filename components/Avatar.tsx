@@ -1,13 +1,13 @@
 "use client";
 
 import * as THREE from "three";
-import React, { useMemo, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect, useState } from "react";
 import { useGraph } from "@react-three/fiber";
 import { useGLTF, useAnimations } from "@react-three/drei";
-import { GLTF } from "three-stdlib";
 import { SkeletonUtils } from "three-stdlib";
 
-type GLTFResult = GLTF & {
+
+type GLTFResult = {
     nodes: {
         avaturn_body: THREE.SkinnedMesh;
         avaturn_hair_0: THREE.SkinnedMesh;
@@ -16,87 +16,101 @@ type GLTFResult = GLTF & {
         avaturn_look_0: THREE.SkinnedMesh;
         Hips: THREE.Bone;
     };
-    materials: {
-        avaturn_body_material: THREE.MeshStandardMaterial;
-        avaturn_hair_0_material: THREE.MeshStandardMaterial;
-        avaturn_hair_1_material: THREE.MeshStandardMaterial;
-        avaturn_shoes_0_material: THREE.MeshStandardMaterial;
-        avaturn_look_0_material: THREE.MeshStandardMaterial;
-    };
+    materials: Record<string, THREE.MeshStandardMaterial>;
 };
 
-type GroupProps = React.ComponentProps<"group">;
+type AvatarPhase = "landing" | "skills" | "projects" | "contact";
 
-interface AvatarProps extends GroupProps {
-    phase: "landing" | "skills";
-}
-
-export function Avatar({ phase, ...props }: AvatarProps) {
+export function Avatar({
+    phase,
+    ...props
+}: {
+    phase: AvatarPhase;
+} & React.ComponentProps<"group">) {
     const group = useRef<THREE.Group>(null);
+    const [rotate, setRoatate] = useState(Math.PI / 4)
+    /* ================= BASE MODEL (SKELETON SOURCE) ================= */
+    const base = useGLTF("/models/model-transformed.glb");
 
-    // Load Base Model (Idle)
-    const { scene: scene1, animations: anim1 } = useGLTF("/models/model-transformed.glb");
+    /* ================= ANIMATION SOURCES ================= */
+    const skillsGLTF = useGLTF("/models/model2-transformed.glb");
+    const projectsGLTF = useGLTF("/models/model3-transformed.glb");
+    const contactGLTF = useGLTF("/models/model4-transformed.glb");
 
-    // Load Second Model (Skill Animation)
-    // We only need the animations from this one
-    const { animations: anim2 } = useGLTF("/models/model2-transformed.glb");
+    /* ================= CLONE BASE SCENE ================= */
+    const scene = useMemo(() => SkeletonUtils.clone(base.scene), [base.scene]);
+    const { nodes, materials } = useGraph(scene) as unknown as GLTFResult;
 
-    // Merge animations
+    /* ================= RETARGET ANIMATIONS ================= */
     const animations = useMemo(() => {
-        const idleAnim = anim1[0].clone();
-        idleAnim.name = "Idle";
+        const idle = base.animations[0].clone();
+        idle.name = "Idle";
 
-        const skillAnim = anim2[0].clone();
-        skillAnim.name = "Skill";
+        const skills = skillsGLTF.animations[0].clone();
+        skills.name = "Skills";
 
-        return [idleAnim, skillAnim];
-    }, [anim1, anim2]);
+        const projects = projectsGLTF.animations[0].clone();
+        projects.name = "Projects";
 
-    const clone = useMemo(() => SkeletonUtils.clone(scene1), [scene1]);
-    const { nodes, materials } = useGraph(clone) as unknown as GLTFResult;
+        const contact = contactGLTF.animations[0].clone();
+        contact.name = "Contact";
 
-    const { actions, mixer } = useAnimations(animations, group);
+        return [idle, skills, projects, contact];
+    }, [base.animations, skillsGLTF.animations, projectsGLTF.animations, contactGLTF.animations]);
 
+    /* ================= ANIMATION MIXER ================= */
+    const { actions } = useAnimations(animations, group);
+
+    /* ================= PHASE CONTROL ================= */
     useEffect(() => {
         if (!actions) return;
 
-        const idle = actions["Idle"];
-        const skill = actions["Skill"];
+        const idle = actions.Idle;
+        const skills = actions.Skills;
+        const projects = actions.Projects;
+        const contact = actions.Contact;
 
-        if (!idle || !skill) return;
-
-        // Reset behaviors defaults
-        idle.setLoop(THREE.LoopRepeat, Infinity);
-        idle.clampWhenFinished = false;
-
-        skill.setLoop(THREE.LoopOnce, 1);
-        skill.clampWhenFinished = true;
+        idle?.setLoop(THREE.LoopRepeat, Infinity);
+        skills?.setLoop(THREE.LoopOnce, 1);
+        skills!.clampWhenFinished = true;
+        projects?.setLoop(THREE.LoopRepeat, Infinity);
+        contact?.setLoop(THREE.LoopRepeat, Infinity);
 
         if (phase === "landing") {
-            // TRANSITION TO IDLE
-            // Use explicit fade out/in to avoid stuck states
-            skill.fadeOut(0.5);
-            idle.reset().fadeIn(0.5).play();
-
-        } else if (phase === "skills") {
-            // TRANSITION TO SKILL
-            idle.fadeOut(0.5);
-            skill.reset().fadeIn(0.5).play();
+            skills?.fadeOut(0.3);
+            projects?.fadeOut(0.3);
+            contact?.fadeOut(0.3);
+            idle?.reset().fadeIn(0.4).play();
         }
 
-        return () => {
-            // Optional cleanup
-        };
+        if (phase === "skills") {
+            idle?.fadeOut(0.3);
+            projects?.fadeOut(0.3);
+            contact?.fadeOut(0.3);
+            skills?.reset().fadeIn(0.4).play();
+        }
+
+        if (phase === "projects") {
+            idle?.fadeOut(0.3);
+            skills?.fadeOut(0.3);
+            contact?.fadeOut(0.3);
+            projects?.reset().fadeIn(0.4).play();
+        }
+
+        if (phase === "contact") {
+            idle?.fadeOut(0.3);
+            skills?.fadeOut(0.3);
+            projects?.fadeOut(0.3);
+            contact?.reset().fadeIn(0.4).play();
+            setRoatate(Math.PI / 2);
+        }
     }, [phase, actions]);
 
-
+    /* ================= RENDER ================= */
     return (
         <group ref={group} {...props} dispose={null}>
-            {/* Rotation to face forward */}
-            <group name="Scene" rotation={[0, Math.PI / 4, 0]}>
-                <group name="Armature">
-                    <primitive object={nodes.Hips} />
-                </group>
+            <group rotation={[0, rotate, 0]}>
+                <primitive object={nodes.Hips} />
 
                 <skinnedMesh geometry={nodes.avaturn_body.geometry} material={materials.avaturn_body_material} skeleton={nodes.avaturn_body.skeleton} />
                 <skinnedMesh geometry={nodes.avaturn_hair_0.geometry} material={materials.avaturn_hair_0_material} skeleton={nodes.avaturn_hair_0.skeleton} />
@@ -108,5 +122,8 @@ export function Avatar({ phase, ...props }: AvatarProps) {
     );
 }
 
+/* ================= PRELOAD ================= */
 useGLTF.preload("/models/model-transformed.glb");
 useGLTF.preload("/models/model2-transformed.glb");
+useGLTF.preload("/models/model3-transformed.glb");
+useGLTF.preload("/models/model4-transformed.glb");

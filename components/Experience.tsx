@@ -5,9 +5,13 @@ import { Environment, OrbitControls, AdaptiveDpr, Preload } from "@react-three/d
 import { SceneController } from "./SceneController";
 import { Suspense } from "react";
 
-type ScenePhase = "landing" | "skills";
+type ScenePhase = "landing" | "skills" | "projects" | "contact";
 
-export function Experience({ phase }: { phase: ScenePhase }) {
+export function Experience({
+    phase,
+}: {
+    phase: ScenePhase;
+}) {
     return (
         <Canvas
             camera={{
@@ -28,8 +32,8 @@ export function Experience({ phase }: { phase: ScenePhase }) {
             style={{
                 position: "fixed",
                 inset: 0,
-                zIndex: -1,
-                pointerEvents: "auto",
+                zIndex: phase === "projects" ? 50 : -1,
+                pointerEvents: "none", // Allow clicks to pass through to DOM
             }}
         >
             <Suspense fallback={null}>
