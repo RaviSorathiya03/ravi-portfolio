@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# 🏡 My Little Home in the Internet
 
-First, run the development server:
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Three.js](https://img.shields.io/badge/Three.js-black?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org/)
+[![GSAP](https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=greensock&logoColor=white)](https://greensock.com/gsap)
 
+<br />
+
+**Where immersive 3D design meets high-performance engineering.**  
+*A digital playground showcasing creativity, code, and interactive experiences.*
+
+[View Demo](#) · [Report Bug](#) · [Request Feature](#)
+
+</div>
+
+---
+
+## 🔮 The Experience
+
+Welcome to my portfolio! This isn't just a resume; it's an interactive journey. I've crafted a space that feels alive, using the power of **React Three Fiber** and **GSAP** to bring 3D elements and smooth animations to the web.
+
+### 🍱 Standard 3D Asset
+You can view the raw 3D model used in the immersive scene directly on GitHub:
+
+👉 **[View the 3D Avatar Model](public/models/model-transformed.glb)** 👈
+*(Click to open GitHub's interactive 3D viewer)*
+
+---
+
+## ✨ Features at a Glance
+
+| Feature | Description |
+| :--- | :--- |
+| **🎭 Immersive 3D** | Interactive avatar and scene elements powered by `react-three-fiber` |
+| **🌊 Smooth Scroll** | Integrated **Lenis** for that buttery-smooth, premium scrolling feel |
+| **🎬 Cinematic Anims** | Scroll-triggered timelines and reveals using **GSAP** & **Framer Motion** |
+| **⚡ Blazing Fast** | Built on **Next.js 15** (App Router) for optimal performance and SEO |
+| **🎨 Modern Styling** | Styled with **Tailwind CSS v4** for a clean, maintainable design system |
+| **🌚 Dark/Light Mode** | Fully themed interface that respects user preference |
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+This project is built with a focus on **performance**, **scalability**, and **developer experience**.
+
+- **Core Framework**: Next.js 15 (React 19)
+- **Language**: TypeScript (Strict Mode)
+- **Styling**: Tailwind CSS v4 + PostCSS
+- **3D Engine**: Three.js + React Three Fiber + Drei
+- **Animation**: GSAP (ScrollTrigger) + Framer Motion
+- **Icons**: Lucide React
+- **PackageManager**: Bun / NPM
+
+---
+
+## � Getting Started
+
+Ready to explore the code? Follow these steps to spin up the project locally.
+
+### 1. clone the repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/RaviSorathiya03/ravi-portfolio.git
+cd ravi-portfolio/frontend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
+We recommend using **Bun** for speed, but npm/yarn work great too.
+```bash
+bun install
+# or
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Ignite the engine
+```bash
+bun dev
+# or
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Visit `http://localhost:3000` and enjoy the experience! 🚀
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📂 Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+A quick map of the territory:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+frontend/
+├── app/              # Next.js App Router (Pages & Layouts)
+├── components/       # 🧱 UI Blocks & 3D Scenes
+│   ├── canvas/       # R3F Canvas components
+│   └── ui/           # Standard React UI components
+├── public/           # 🖼️ Static Assets
+│   └── models/       # 3D GLB/GLTF Models
+├── styles/           # Global styles & Tailwind config
+└── ...
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+<div align="center">
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*Crafted with 💙 by Ravi Sorathiya*
+
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/RaviSorathiya03)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/ravisorathiya)
+
+</div>
