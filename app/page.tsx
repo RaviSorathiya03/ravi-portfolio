@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Experience } from "@/components/Experience";
 import Landing from "@/components/Landing";
 import Skills from "@/components/Skills";

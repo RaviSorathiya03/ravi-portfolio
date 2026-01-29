@@ -1,11 +1,11 @@
 "use client";
-
-import { createContext, useContext, useRef } from "react";
+import { createContext, useContext, useRef, useCallback, useState } from "react";
 
 interface ModelPositionStore {
-    position: { x: number; y: number; z: number };
     subscribe: (callback: (pos: { x: number; y: number; z: number }) => void) => () => void;
     updatePosition: (x: number, y: number, z: number) => void;
+    setIsMobile: (isMobile: boolean) => void;
+    isMobile: boolean;
 }
 
 const ModelPositionContext = createContext<ModelPositionStore | null>(null);
@@ -13,21 +13,28 @@ const ModelPositionContext = createContext<ModelPositionStore | null>(null);
 export function ModelPositionProvider({ children }: { children: React.ReactNode }) {
     const subscribers = useRef(new Set<(pos: { x: number; y: number; z: number }) => void>());
     const position = useRef({ x: 0, y: 0, z: 0 });
+    const [isMobile, setIsMobile] = useState(false);
 
-    const updatePosition = (x: number, y: number, z: number) => {
+    const updatePosition = useCallback((x: number, y: number, z: number) => {
         position.current = { x, y, z };
         subscribers.current.forEach((callback) => callback(position.current));
-    };
+    }, []);
 
-    const subscribe = (callback: (pos: { x: number; y: number; z: number }) => void) => {
+    const subscribe = useCallback((callback: (pos: { x: number; y: number; z: number }) => void) => {
         subscribers.current.add(callback);
+        callback(position.current);
         return () => {
             subscribers.current.delete(callback);
         };
-    };
+    }, []);
 
     return (
-        <ModelPositionContext.Provider value={{ position: position.current, subscribe, updatePosition }}>
+        <ModelPositionContext.Provider value={{
+            subscribe,
+            updatePosition,
+            setIsMobile,
+            isMobile
+        }}>
             {children}
         </ModelPositionContext.Provider>
     );

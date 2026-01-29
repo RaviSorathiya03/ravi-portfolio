@@ -30,12 +30,12 @@ export function Avatar({
     const group = useRef<THREE.Group>(null);
     const [rotate, setRoatate] = useState(Math.PI / 4)
     /* ================= BASE MODEL (SKELETON SOURCE) ================= */
-    const base = useGLTF("/models/model-transformed.glb");
+    const base = useGLTF("/model-transformed.glb");
 
     /* ================= ANIMATION SOURCES ================= */
-    const skillsGLTF = useGLTF("/models/model2-transformed.glb");
-    const projectsGLTF = useGLTF("/models/model3-transformed.glb");
-    const contactGLTF = useGLTF("/models/model4-transformed.glb");
+    const skillsGLTF = useGLTF("/model2-transformed.glb");
+    const projectsGLTF = useGLTF("/model3-transformed.glb");
+    const contactGLTF = useGLTF("/model4-transformed.glb");
 
     /* ================= CLONE BASE SCENE ================= */
     const scene = useMemo(() => SkeletonUtils.clone(base.scene), [base.scene]);
@@ -71,8 +71,10 @@ export function Avatar({
         const contact = actions.Contact;
 
         idle?.setLoop(THREE.LoopRepeat, Infinity);
-        skills?.setLoop(THREE.LoopOnce, 1);
-        skills!.clampWhenFinished = true;
+        if (skills) {
+            // eslint-disable-next-line react-hooks/immutability, @typescript-eslint/no-explicit-any
+            (skills as any).clampWhenFinished = true;
+        }
         projects?.setLoop(THREE.LoopRepeat, Infinity);
         contact?.setLoop(THREE.LoopRepeat, Infinity);
 

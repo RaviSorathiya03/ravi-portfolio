@@ -110,6 +110,7 @@ export const CardItem = ({
   rotateZ = 0,
   ...rest
 }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   as?: any;
   children: React.ReactNode;
   className?: string;

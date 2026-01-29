@@ -11,7 +11,7 @@ gsap.registerPlugin(ScrollTrigger);
 const Contact = ({ onEnter }: { onEnter: () => void }) => {
     const container = useRef<HTMLDivElement>(null);
     const formRef = useRef<HTMLDivElement>(null);
-    const { subscribe } = useModelPosition();
+    const { subscribe, isMobile } = useModelPosition();
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -29,9 +29,10 @@ const Contact = ({ onEnter }: { onEnter: () => void }) => {
         // Subscription for value-based animation
         const unsubscribe = subscribe((pos) => {
             if (formRef.current) {
-                // Tracking range: Model X -15 -> -6
+                // Tracking range: Model X -15 -> Target
+                // Target is -6 on desktop, 0 on mobile (matching SceneController)
                 const startX = -15;
-                const endX = -6;
+                const endX = isMobile ? 0 : -6;
 
                 // Calculate progress based on model position
                 let progress = (pos.x - startX) / (endX - startX);
@@ -40,10 +41,10 @@ const Contact = ({ onEnter }: { onEnter: () => void }) => {
                 progress = Math.max(0, Math.min(1, progress));
 
                 // Apply styles directly to the DOM for performance
-                // Translate: -100vw (hidden) to 0 (visible)
-                const translateX = -100 + (progress * 100);
+                // Translate: -150vw (hidden far left) to 0 (visible)
+                const translateX = -150 + (progress * 150);
                 const opacity = progress;
-                const scale = 0.9 + (progress * 0.1); // 0.9 -> 1.0
+                const scale = 0.8 + (progress * 0.2); // 0.8 -> 1.0
 
                 formRef.current.style.transform = `translateX(${translateX}vw) scale(${scale})`;
                 formRef.current.style.opacity = `${opacity}`;
@@ -54,7 +55,7 @@ const Contact = ({ onEnter }: { onEnter: () => void }) => {
             ctx.revert();
             unsubscribe();
         };
-    }, [onEnter, subscribe]);
+    }, [onEnter, subscribe, isMobile]);
 
     return (
         <section
@@ -95,7 +96,7 @@ const Contact = ({ onEnter }: { onEnter: () => void }) => {
                                 Get in Touch
                             </h3>
                             <p className="text-neutral-600 text-sm mt-2 dark:text-neutral-300">
-                                I'm currently available for freelance work and open to new opportunities.
+                                I&apos;m currently available for freelance work and open to new opportunities.
                             </p>
 
                             <form className="my-8" onSubmit={(e) => e.preventDefault()}>

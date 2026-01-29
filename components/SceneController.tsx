@@ -13,7 +13,12 @@ export function SceneController({
     const root = useRef<THREE.Group>(null);
     const { viewport } = useThree();
     const isMobile = viewport.width < 5;
-    const { updatePosition } = useModelPosition();
+    const { updatePosition, setIsMobile } = useModelPosition();
+
+    // Notify context of isMobile status
+    useEffect(() => {
+        setIsMobile(isMobile);
+    }, [isMobile, setIsMobile]);
 
     useEffect(() => {
         if (!root.current) return;
@@ -57,19 +62,18 @@ export function SceneController({
         const target = targets[phase];
 
         // --- ANIMATION LOGIC ---
+        const startPos = phase === "contact"
+            ? { x: -15, y: target.position[1], z: target.position[2] }
+            : { x: root.current.position.x, y: root.current.position.y, z: root.current.position.z };
+
+        // Explicitly set initial position and notify subscribers immediately
+        if (phase === "contact") {
+            root.current.position.set(startPos.x, startPos.y, startPos.z);
+            updatePosition(startPos.x, startPos.y, startPos.z);
+        }
 
         if (phase === "contact") {
             // == CONTACT PHASE (PUSH EFFECT) ==
-            // Avatar moves: Left (-15) -> Target (-6)
-
-            // 1. Set initial states (Instant Jump)
-            tl.set(root.current.position, {
-                x: -15,
-                y: target.position[1],
-                z: target.position[2]
-            }, 0);
-
-            // 2. Animate Avatar
             tl.to(root.current.position, {
                 x: target.position[0],
                 y: target.position[1],
@@ -92,23 +96,23 @@ export function SceneController({
                 x: target.position[0],
                 y: target.position[1],
                 z: target.position[2],
-                duration: 1.2,
-                ease: "power3.inOut"
+                duration: 0.8, // Snappier
+                ease: "power2.inOut"
             }, 0);
 
             tl.to(root.current.scale, {
                 x: target.scale,
                 y: target.scale,
                 z: target.scale,
-                duration: 1.2,
-                ease: "power3.inOut"
+                duration: 0.8, // Snappier
+                ease: "power2.inOut"
             }, 0);
         }
 
         return () => {
             tl.kill();
         };
-    }, [phase, viewport.width, updatePosition]);
+    }, [phase, viewport.width, updatePosition, isMobile]);
 
     return (
         <group ref={root} >

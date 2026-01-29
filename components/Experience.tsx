@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls, AdaptiveDpr, Preload } from "@react-three/drei";
+import { Environment, OrbitControls, Preload } from "@react-three/drei";
 import { SceneController } from "./SceneController";
 import { Suspense } from "react";
 
